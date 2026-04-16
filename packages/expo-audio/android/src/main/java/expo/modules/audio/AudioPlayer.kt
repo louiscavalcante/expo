@@ -36,7 +36,23 @@ class AudioPlayer(
 ) : BaseAudioPlayer(
   player = ExoPlayer.Builder(context)
     .setLooper(context.mainLooper)
-    .setAudioAttributes(AudioAttributes.DEFAULT, false)
+    // USAGE_MEDIA + handleAudioFocus=true so ExoPlayer actually requests
+    // audio focus. `AudioAttributes.DEFAULT, false` declared USAGE_UNKNOWN
+    // and never asked for focus — after any other component released focus
+    // on a non-media stream (e.g. a third-party recording library
+    // abandoning STREAM_VOICE_CALL focus on stop), playback would report
+    // playing=true but stream to a dead output: currentTime never advanced
+    // and the player auto-unloaded within ~200 ms, silently dropping short
+    // TTS clips. Speech content type is the right default for this
+    // module's primary use (text-to-speech and short UI clips); music-
+    // heavy apps can still adjust via AudioMode.
+    .setAudioAttributes(
+      AudioAttributes.Builder()
+        .setUsage(C.USAGE_MEDIA)
+        .setContentType(C.AUDIO_CONTENT_TYPE_SPEECH)
+        .build(),
+      true
+    )
     .setSeekForwardIncrementMs(SEEK_JUMP_INTERVAL_MS)
     .setSeekBackIncrementMs(SEEK_JUMP_INTERVAL_MS)
     .apply {

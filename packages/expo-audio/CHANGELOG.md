@@ -19,6 +19,7 @@
 - [iOS] Improve looping support. ([#43600](https://github.com/expo/expo/pull/43600) by [@alanjhughes](https://github.com/alanjhughes))
 - [iOS] Prevent stale lock screen artwork updates from crashing or overwriting newer metadata. ([#44498](https://github.com/expo/expo/pull/44498) by [@kotadd](https://github.com/kotadd))
 - [Android] Fix lock screen controls on android 12 and earlier. ([#44754](https://github.com/expo/expo/pull/44754) by [@alanjhughes](https://github.com/alanjhughes))
+- [Android] Request media audio focus on `AudioPlayer`'s ExoPlayer so playback actually starts after another component held non-media audio focus (e.g. a recording library that grabbed `STREAM_VOICE_CALL` focus). Previously `AudioAttributes.DEFAULT, false` caused the player to report `playing=true` while streaming to a dead output and auto-unload within ~200 ms, silently dropping short TTS clips. ([#PR_NUMBER](https://github.com/expo/expo/pull/PR_NUMBER) by [@louiscavalcante](https://github.com/louiscavalcante))
 
 ### 💡 Others
 
